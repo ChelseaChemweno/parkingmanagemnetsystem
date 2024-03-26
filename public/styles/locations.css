@@ -12,5 +12,9 @@
     border: 1px solid black;
     padding: 16px;
     width: 45%;
+    transition: all 0.2s linear;
+  }
+  .locations ul li:hover{
+    transform: translateY(-3px);
   }
   

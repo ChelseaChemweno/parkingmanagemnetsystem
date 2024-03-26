@@ -4,7 +4,7 @@ CREATE TABLE locations(location_id VARCHAR(40), location_name VARCHAR(255), lati
 
 CREATE TABLE space_categories(category_id VARCHAR(10), description VARCHAR(255), price_ksh_hour INT, PRIMARY KEY(category_id) );
 
-CREATE TABLE spaces( space_id INT AUTO_INCREMENT,space_label VARCHAR(10), space_location VARCHAR(40), space_category VARCHAR(10), occupied INT DEFAULT 0, PRIMARY KEY (space_id), FOREIGN KEY(space_location) REFERENCES locations(location_id), FOREIGN KEY(space_category) REFERENCES space_categories(category_id) );
+CREATE TABLE spaces( space_id INT AUTO_INCREMENT,space_label VARCHAR(20), space_location VARCHAR(40), space_category VARCHAR(10), occupied INT DEFAULT 0, PRIMARY KEY (space_id), FOREIGN KEY(space_location) REFERENCES locations(location_id), FOREIGN KEY(space_category) REFERENCES space_categories(category_id) );
 
 CREATE TABLE bookings(booking_id INT AUTO_INCREMENT, user  VARCHAR(100), space INT, payment_method VARCHAR(20), time_in DATETIME DEFAULT CURRENT_TIMESTAMP, time_out DATETIME, PRIMARY KEY(booking_id), FOREIGN KEY(user) REFERENCES users(email), FOREIGN KEY (space) REFERENCES spaces(space_id));
 
@@ -102,4 +102,4 @@ VALUES
   ("show-9", "show", "bikes"),
   ("show-10", "show", "bikes")
 ;
-
+b c 

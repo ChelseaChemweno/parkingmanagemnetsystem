@@ -11,6 +11,26 @@
    <%- include("_header.ejs") %>
     <main>
         <h1> Spaces</h1>
+        <h2> Bikes </h2>
+        <ul>
+            <% locals.spaces.filter(space=>space.space_category==="bikes").forEach(space=>{ %>
+
+                <li>
+                   
+                        <h3> <%= space.space_label %> </h3>
+                        <% if(space.occupied==0){ %>
+                            <p style="color: green;"> Available </p>
+                            <a href="/bookspace?space_id=<%=space.space_id%>">Book</a>
+                        <% } else{%>
+                            <p style="color: orangered;"> Occupied </p>
+                        <%}%>
+                    
+                </li>
+
+            <% }) %>
+                
+        </ul>
+        <h3>Cars</h3>
     </main>
     <%- include("_footer.ejs") %>
 </body>

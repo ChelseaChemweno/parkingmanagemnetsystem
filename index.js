@@ -38,7 +38,18 @@ app.get("/booknow", (req,res)=>{
 
 app.get("/spaces", (req,res)=>{
     // depending the location, we will fetch all spaces for that location
-    res.render("spaces.ejs")
+    // console.log(req.path);
+    // console.log(req.query);
+    const location = req.query.location
+    const spacesQuery = `SELECT * FROM spaces WHERE space_location='${location}'`
+
+    conn.query(spacesQuery, (sqlErr, spaces)=>{
+        if(sqlErr){
+            res.status(500).render("500.ejs", {message: "Server Error: Contact Admin if this persists"})
+        }else{
+            res.render("spaces.ejs", {spaces: spaces})
+        }
+    })
 })
 app.get("/signup", (req,res)=>{
     res.render("signup.ejs")

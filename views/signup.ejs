@@ -10,8 +10,63 @@
 <body>
    <%- include("_header.ejs") %>
     <main>
-        <h1> Sign Up</h1>
-        <form action=""></form>
+        <section>
+            <h1> Sign Up</h1>
+            <% if(locals.error){ %>
+                <p style="color:orangered"> <%=locals.errMessage%> </p>
+                <form action="/signup" method="post">
+                        <div>
+                            <label for="fullname">Full Name</label>
+                            <input type="text" name="fullname" id="fullname" value="<%=locals.prevInput.fullname%>" >
+                        </div>
+                        <div>
+                            <label for="email">Email</label>
+                            <input type="email" name="email" id="email" value="<%=locals.prevInput.email%>">
+                        </div>
+                        <div>
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" name="phone" id="phone" value="<%=locals.prevInput.phone%>" >
+                        </div>
+                        <div>
+                            <label for="pass">Password</label>
+                            <input type="password" name="pass" id="pass" value="<%=locals.prevInput.pass%>">
+                        </div>
+                        <div>
+                            <label for="confirmPass">Confirm Password</label>
+                            <input type="password" name="confirmPass" id="confirmPass" value="<%=locals.prevInput.confirmPass%>">
+                        </div>
+                        <div>
+                            <input type="submit" value="Sign Up">
+                        </div>
+                </form>
+            <%}else{%>
+                <form action="/signup" method="post">
+                        <div>
+                            <label for="fullname">Full Name</label>
+                            <input type="text" name="fullname" id="fullname">
+                        </div>
+                        <div>
+                            <label for="email">Email</label>
+                            <input type="email" name="email" id="email">
+                        </div>
+                        <div>
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" name="phone" id="phone" value="+254">
+                        </div>
+                        <div>
+                            <label for="pass">Password</label>
+                            <input type="password" name="pass" id="pass">
+                        </div>
+                        <div>
+                            <label for="confirmPass">Confirm Password</label>
+                            <input type="password" name="confirmPass" id="confirmPass">
+                        </div>
+                        <div>
+                            <input type="submit" value="Sign Up">
+                        </div>
+                </form>
+            <%}%>
+        </section>
     </main>
     <%- include("_footer.ejs") %>
 </body>

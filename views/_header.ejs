@@ -8,8 +8,13 @@
       <a href="/contact">Contact Us</a>
     </nav>
     <nav>
+      <% if(locals.user){%>
+        <a href="/profile"> <%= locals.user.fullname.split(" ")[0] %> </a>
+        <a href="/logout">Logout</a>
+        <% } else{%>
       <a href="/signin">Sign In</a>
       <a href="/signup">Sign Up</a>
+      <%}%>
     </nav>
     <button id="menu-btn">
       <ion-icon name="menu-outline"></ion-icon>

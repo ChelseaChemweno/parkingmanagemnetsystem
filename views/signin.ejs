@@ -10,8 +10,47 @@
 <body>
    <%- include("_header.ejs") %>
     <main>
-        <h1> Sign In</h1>
-        <form action=""></form>
+        <section>
+            <h1> Sign In</h1>
+            <% if(locals.message){ %>
+                <p style="color:orangered"> <%=locals.message%> </p>
+            <%}%>
+            <% if(locals.error){ %>                
+                <form action="/signin" method="post">
+                    
+                        <div>
+                            <label for="email">Email</label>
+                            <input type="email" name="email" id="email" value="<%=locals.prevInput.email%>">
+                        </div>
+                        
+                        <div>
+                            <label for="pass">Password</label>
+                            <input type="password" name="pass" id="pass" value="<%=locals.prevInput.pass%>">
+                        </div>
+                        
+                        <div>
+                            <input type="submit" value="Sign Up">
+                        </div>
+                </form>
+            <%}else{%>
+                <form action="/signin" method="post">
+                      
+                        <div>
+                            <label for="email">Email</label>
+                            <input type="email" name="email" id="email">
+                        </div>
+                     
+                        <div>
+                            <label for="pass">Password</label>
+                            <input type="password" name="pass" id="pass">
+                        </div>
+                      
+                        <div>
+                            <input type="submit" value="Sign Up">
+                        </div>
+                </form>
+            <%}%>
+        </section>
     </main>
     <%- include("_footer.ejs") %>
 </body>

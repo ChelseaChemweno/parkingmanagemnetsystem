@@ -2,6 +2,7 @@ const express = require("express")
 const mysql = require("mysql")
 const bcrypt = require("bcrypt")
 const session = require("express-session")
+const cookieParser = require('cookie-parser')
 const conn = mysql.createConnection({
     database: "parkingms",
     host: "localhost",
@@ -10,6 +11,7 @@ const conn = mysql.createConnection({
 })
 
 const app = express()
+app.use(cookieParser())
 app.use(express.static("public"))
 app.use(express.urlencoded({extended: true})) // bodyparser -- req.body - with form data
 app.use(session({
@@ -24,7 +26,16 @@ app.use((req,res,next)=>{
         res.locals.user = req.session.user
         next()
     }else if(protectedRoutes.includes(req.path)){
-        // cookie
+        // set redirectionhistorycookie cookie
+        let path = req.path
+        if (Object.keys(req.query).length > 0) {
+            const queryString = new URLSearchParams(req.query).toString();
+            path += `?${queryString}`;
+          }
+        res.cookie("redirectHistory", path, {
+            maxAge: 1000 * 60 * 60 * 24, // Expires in 24 hours
+            httpOnly: false, // Restricts access from client-side JavaScript
+        })
         res.redirect("/signin?message=signin")
     }else {
         next()
@@ -70,6 +81,22 @@ app.get("/spaces", (req,res)=>{
         }
     })
 })
+app.get("/bookspace", (req,res)=>{
+    const spaceId = req.query.space_id
+    res.render("bookspace.ejs", {spaceId:spaceId})
+})
+app.post("/bookspace", (req,res)=>{
+    const userId = req.session.user.email
+    const {timeOut, paymentMethod, spaceId} = req.body
+    // insert to booking table
+    res.redirect("/profile")
+})
+
+app.get("/profile", (req,res)=>{
+    res.render("profile.ejs")
+})
+
+
 app.get("/signup", (req,res)=>{
     res.render("signup.ejs")
 })
@@ -109,7 +136,7 @@ app.get("/signin", (req,res)=>{
 })
 
 app.post("/signin", (req,res)=>{
-    const loginStatement = `SELECT email,fullname, password FROM users WHERE email = '${req.body.email}'`
+    const loginStatement = `SELECT * FROM users WHERE email = '${req.body.email}'`
     conn.query(loginStatement, (sqlErr, userData)=>{
         if(sqlErr){
             console.log(sqlErr.message);
@@ -123,13 +150,25 @@ app.post("/signin", (req,res)=>{
                     // create a session
                     // res.cookie("email",userData[0].email, {maxAge: 60} )
                     req.session.user = userData[0]
-                    res.redirect("/")
+                    // check if this was a redirection, we need to send them back to where they were. 
+                    // check if there is a cookie-- redirect history- 
+                    if(req.cookies.redirectHistory){
+                        let redirectPath = req.cookies.redirectHistory
+                        res.clearCookie("redirectHistory")
+                        res.redirect(redirectPath)
+                    }else{
+                        res.redirect("/")
+                    }                    
                 }else{
                     res.status(401).render("signin.ejs", {error: true,message: "Email or Password Invalid", prevInput: req.body })
                 }
             }
         }
     })
+})
+app.get("/logout", (req,res)=>{
+    req.session.destroy()
+    res.redirect("/")
 })
 
 // 404 route 

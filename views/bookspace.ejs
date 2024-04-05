@@ -13,10 +13,10 @@
         <section>
             <h1>Complete your booking</h1>
             <div>
-                <p>Location</p>
-                <p>Space name</p>
-                <p>Space category</p>
-                <p>KSH. 50  / hr</p>
+                <p>Location: <%=spaceInfo.location_name %> </p>
+                <p>Space name: <%=spaceInfo.space_label %></p>
+                <p>Space category: <%= spaceInfo.description %> </p>
+                <p>Rate per Hour:  KSH. <span id="rate"><%= spaceInfo.price_ksh_hour %></span> </p>
             </div>
             <form action="/bookspace" method="post">
                 <input type="hidden" name="spaceId" value="">
@@ -30,20 +30,34 @@
                     </select>
                 </div>
                 <div>
-                    <label for="payment">How long are you Parking </label>
-                    <select name="paymentMethod" id="payment">
+                    <label for="time">How long are you Parking </label>
+                    <select name="time" id="time">
                         <option value="1">1 Hour</option>
                         <option value="2">2 Hours</option>
                         <option value="3">3 hours</option>
                         <option value="4">4 hours or more</option>
                     </select>
                 </div>
+                <p>Amount Expected to pay: KSH. <span id="total"></span></p>
                 <div>
-                    <input type="submit" value="Complete Checkout">
+                    <input type="submit" value="Complete Booking">
                 </div>
             </form>
         </section>
     </main>
+    <script>
+        const rateEl = document.getElementById("rate")
+        const timeSelectEl = document.getElementById("time")
+        const totalAmountEl = document.getElementById("total")
+
+        totalAmountEl.textContent = rateEl.textContent
+
+        timeSelectEl.addEventListener("change", (event)=>{
+            totalAmountEl.textContent = event.target.value * rateEl.textContent
+        })
+        // console.log( "9" * "9" );
+    </script>
     <%- include("_footer.ejs") %>
+
 </body>
 </html>

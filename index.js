@@ -83,16 +83,31 @@ app.get("/spaces", (req,res)=>{
 })
 app.get("/bookspace", (req,res)=>{
     const spaceId = req.query.space_id
-    res.render("bookspace.ejs", {spaceId:spaceId})
+    const selectSpaceInfo = `SELECT location_name,space_label, description, price_ksh_hour FROM spaces JOIN locations ON spaces.space_location = locations.location_id JOIN space_categories ON spaces.space_category = space_categories.category_id WHERE space_id = '${spaceId}'` 
+
+    conn.query(selectSpaceInfo, (err, spaceInfo)=>{
+        if(err){
+            console.log(err);
+            res.status(500).render("500.ejs", {message: "Server Error!! Contact admin if this persists."})
+        }else{
+            console.log(spaceInfo);
+            res.render("bookspace.ejs", {spaceId:spaceId, spaceInfo: spaceInfo[0]})
+        }
+    })
 })
+
 app.post("/bookspace", (req,res)=>{
     const userId = req.session.user.email
     const {timeOut, paymentMethod, spaceId} = req.body
     // insert to booking table
+    // make the space unavailable
     res.redirect("/profile")
 })
 
 app.get("/profile", (req,res)=>{
+    // all bookings -- active booking, and history
+    // active booking -- current bill , checkout link(make space available, thank you message.(reciept))
+
     res.render("profile.ejs")
 })
 

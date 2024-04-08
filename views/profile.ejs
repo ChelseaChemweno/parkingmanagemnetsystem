@@ -36,14 +36,22 @@
                     <%}else{%>
                         <p> Parking Time: <%=hoursPassed%> hours </p>
                     <%}%>
-                    <a href="/checkout?space=<%=booking.space%>">Check Out</a>
+                    <a href="/checkout?space=<%=booking.space%>" style="background-color: blueviolet; color: white;" >Check Out</a>
             <%})%>
        <%}%>
     </section>
     <section>
         <h2>Booking History</h2>
         <% const oldBookings = locals.bookings.filter(booking=>booking.booking_status == 'checked-out') %>
+        <% if(oldBookings.length == 0){ %>
+            <p>You have not packed with us before!</p>
+        <%}else{%>
+            <% oldBookings.forEach(booking=>{ %>
+                <h4> Space ID  <%= booking.space %> </h4>
+                <p> Date: <%= new Date(booking.time_in).toLocaleDateString()  %> </p>
+            <% }) %>
 
+        <%}%> 
     </section>
     </main>
     <%- include("_footer.ejs") %>

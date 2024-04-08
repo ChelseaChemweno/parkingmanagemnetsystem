@@ -21,7 +21,8 @@ app.use(session({
     cookie: { maxAge: 600000}
 }))
 app.use((req,res,next)=>{
-    const protectedRoutes = [,"/profile","/bookspace"]
+    const protectedRoutes = [,"/profile","/bookspace","/checkout"]
+    
     if(req.session && req.session.user ){
         res.locals.user = req.session.user
         next()
@@ -145,6 +146,29 @@ app.get("/profile", (req,res)=>{
         }
     })   
 })
+
+app.get("/checkout", (req,res)=>{
+    const spaceId = req.query.space
+    const updateSpaceAvailabity = `UPDATE spaces SET occupied = 0 WHERE space_id = ${Number(spaceId)} `
+    const checkoutBooking = `UPDATE bookings SET booking_status = "checked-out" WHERE space = ${Number(spaceId)} AND user = "${req.session.user.email}" `
+
+    conn.query(checkoutBooking, (checkoutErr)=>{
+        if(checkoutErr){
+            console.log(checkoutErr);
+            res.status(500).render("500.ejs", {message: "Server Error!! Contact admin if this persists."})
+        }else{
+            conn.query(updateSpaceAvailabity, (updateErr)=>{
+                if(updateErr){
+                    console.log(updateErr);
+                    res.status(500).render("500.ejs", {message: "Server Error!! Contact admin if this persists."})
+                }else{
+                    res.redirect("/profile")
+                }
+            })
+        }
+    })
+})
+
 app.get("/signup", (req,res)=>{
     res.render("signup.ejs")
 })

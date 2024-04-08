@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,12 +20,30 @@
     </section>
     <section>
         <h2>Active Booking</h2>
-        <div class="active">
+        <% const activeBookings = locals.bookings.filter(booking=>booking.booking_status == 'checked-in') %>
+        
+        <% if(activeBookings.length == 0){ %>
             <p>You currently not parked with us!</p>
-        </div>
+       <% }else{ %>
+            <%  activeBookings.forEach(booking=>{ %>
+                    <h4> Space ID  <%= booking.space %> </h4>
+                    <% let currentTime = new Date() %>
+                    <% let checkInTime = new Date(booking.time_in)  %> 
+                    <% let timeDiff = currentTime.getTime() - checkInTime.getTime() %>
+                    <%  const hoursPassed = Math.ceil(timeDiff / (1000 * 60 * 60)) %>
+                    <% if(hoursPassed == 1){ %>
+                        <p> Parking Time: 1 hour </p>
+                    <%}else{%>
+                        <p> Parking Time: <%=hoursPassed%> hours </p>
+                    <%}%>
+                    <a href="/checkout?space=<%=booking.space%>">Check Out</a>
+            <%})%>
+       <%}%>
     </section>
     <section>
         <h2>Booking History</h2>
+        <% const oldBookings = locals.bookings.filter(booking=>booking.booking_status == 'checked-out') %>
+
     </section>
     </main>
     <%- include("_footer.ejs") %>

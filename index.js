@@ -97,21 +97,54 @@ app.get("/bookspace", (req,res)=>{
 })
 
 app.post("/bookspace", (req,res)=>{
-    const userId = req.session.user.email
-    const {timeOut, paymentMethod, spaceId} = req.body
-    // insert to booking table
-    // make the space unavailable
-    res.redirect("/profile")
+    const {time, paymentMethod, spaceId} = req.body
+    let confirmAvailability = `SELECT * from spaces WHERE space_id = ${spaceId}`
+    let bookingStatement = `INSERT INTO bookings(user,space,payment_method,time_out,booking_status) VALUES('${req.session.user.email}', ${spaceId}, '${paymentMethod}', CURRENT_TIMESTAMP + INTERVAL ${Number(time)} HOUR, 'checked-in')`
+    let updateAvailability = `UPDATE spaces SET occupied = 1 WHERE space_id = ${spaceId}`
+    conn.query(confirmAvailability, (err, space)=>{
+        if(err){
+            console.log(err);
+            res.status(500).render("500.ejs", {message: "Server Error!! Contact admin if this persists."})
+        }else{
+            if(space[0].occupied !== 0){
+                // occupied
+                res.redirect(`/spaces?location=${space[0].space_location}&message=occupied`)
+            }else{
+                conn.query(bookingStatement, (bookErr)=>{
+                    if(bookErr){
+                        console.log(bookErr);
+                        res.status(500).render("500.ejs", {message: "Server Error!! Contact admin if this persists."})
+                    }else{
+                        // mark space as booked/occupied0 -,l
+                        conn.query(updateAvailability, (updateErr)=>{
+                            if(updateErr){
+                                console.log(updateErr);
+                                res.status(500).render("500.ejs", {message: "Server Error!! Contact admin if this persists."})
+                            }else{
+                                res.redirect("/profile")
+                            }
+                        })                        
+                    }
+                })
+            }
+        }
+    })
 })
 
 app.get("/profile", (req,res)=>{
     // all bookings -- active booking, and history
     // active booking -- current bill , checkout link(make space available, thank you message.(reciept))
+    const selectBookings = `SELECT * FROM bookings WHERE user = '${req.session.user.email}'`
 
-    res.render("profile.ejs")
+    conn.query(selectBookings, (selectErr, bookings)=>{
+        if(selectErr){
+            console.log(selectErr);
+            res.status(500).render("500.ejs", {message: "Server Error!! Contact admin if this persists."})
+        }else{
+            res.render("profile.ejs", {bookings: bookings})
+        }
+    })   
 })
-
-
 app.get("/signup", (req,res)=>{
     res.render("signup.ejs")
 })

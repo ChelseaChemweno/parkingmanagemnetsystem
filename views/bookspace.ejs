@@ -19,7 +19,7 @@
                 <p>Rate per Hour:  KSH. <span id="rate"><%= spaceInfo.price_ksh_hour %></span> </p>
             </div>
             <form action="/bookspace" method="post">
-                <input type="hidden" name="spaceId" value="">
+                <input type="hidden" name="spaceId" value="<%=locals.spaceId%>">
                 <br>
                 <div>
                     <label for="payment">Select Payment Method</label>
